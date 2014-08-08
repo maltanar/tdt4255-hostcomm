@@ -1,0 +1,12 @@
+# Avnet Spartan-6 LX16 Evaluation Kit
+# give r/w permissions to all users to the serial port IF
+# assuming that /dev/ttyACM* s are owned by the group plugdev
+# by Yaman Umuroglu <maltanar@gmail.com>
+
+ACTION!="add", SUBSYSTEM!=="usb_device", GOTO="kcontrol_rules_end"
+ATTRS{idProduct}=="cdca", ATTRS{idVendor}=="04b4", MODE="664", GROUP="plugdev"
+ATTRS{idProduct}=="cdca", ATTRS{idVendor}=="04b4", MODE="664", GROUP="plugdev"
+ATTRS{idProduct}=="cdca", ATTRS{idVendor}=="04b4", MODE="664", GROUP="plugdev"
+ATTRS{idProduct}=="cdca", ATTRS{idVendor}=="04b4", MODE="664", GROUP="plugdev"
+LABEL="kcontrol_rules_end"
+
