@@ -231,8 +231,10 @@ bool TDT4255Board::flashBitfile(QString fileName)
         return false;
     if(!executeProgrammingCommand("drive_prog 1", "ack", false))
         return false;
-    if(!executeProgrammingCommand("read_init", "\x1", true))
-        return false;
+    // read_init seems to work a bit on-and-off, so removing it for now
+    // this should be investigated in some detail
+    //if(!executeProgrammingCommand("read_init", "\x1", true))
+    //    return false;
     if(!executeProgrammingCommand("drive_mode 8", "ack", false))
         return false;
     if(!executeProgrammingCommand("fpga_rst 1", "ack", false))
