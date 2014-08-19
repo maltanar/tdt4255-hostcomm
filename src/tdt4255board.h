@@ -55,14 +55,13 @@ protected:
 
     bool executeProgrammingCommand(QString cmdString, QString expectedReply, bool stripACK = true);
     bool sendBitfile(QString fileName);
+    void clearStaleData();
 
 signals:
     void bufferOperationProgress(int current, int max);
     void bitfileOperationProgress(int current, int max);
     void connStatusChange(bool status);
 
-public slots:
-    void readPortData();
 
 };
 

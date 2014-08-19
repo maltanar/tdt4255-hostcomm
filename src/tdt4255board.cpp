@@ -13,15 +13,19 @@ TDT4255Board::TDT4255Board() :
 
 bool TDT4255Board::executeProgrammingCommand(QString cmdString, QString expectedReply, bool stripACK)
 {
+    clearStaleData();
+
     if(cmdString.length() > 0)
     {
         QByteArray cmdData = cmdString.toLocal8Bit();
         cmdData.append('\0');
         m_serialPort->write(cmdData);
     }
+    else
+        return false;
 
     // wait for up to 0.5s for the reply
-    m_serialPort->waitForReadyRead(1000);
+    m_serialPort->waitForReadyRead(500);
     QByteArray returnData = m_serialPort->readAll();
 
     // strip the ack\0 sequence from reply before comparison, if desired
@@ -95,11 +99,6 @@ bool TDT4255Board::sendBitfile(QString fileName)
     }
 
     return true;
-}
-
-void TDT4255Board::readPortData()
-{
-    qDebug() << "received: " << QString::fromLocal8Bit(m_serialPort->readAll());
 }
 
 TDT4255Board::~TDT4255Board()
@@ -235,9 +234,6 @@ bool TDT4255Board::flashBitfile(QString fileName)
         }
     }
 
-    // clear read buffer in case there is something left there
-    m_serialPort->readAll();
-
     // step 1: check firmware version
     if(!executeProgrammingCommand("get_ver", "3.0.2"))
         return false;
@@ -298,6 +294,9 @@ bool TDT4255Board::readRegister(quint16 address, quint8 &value)
 {
     if(!m_serialPort->isOpen())
         return false;
+
+    clearStaleData();
+
     // example command string for reading register at address 0x0003:
     // r 0003
     QString commandString = QString("r %1\n").arg((ushort) address, 4, 16, QLatin1Char('0'));
@@ -308,7 +307,8 @@ bool TDT4255Board::readRegister(quint16 address, quint8 &value)
 
     if(receivedData.size() != 4)
     {
-        qDebug() << "readRegister got invalid response: " << receivedData.toHex();
+        qDebug() << "readRegister got invalid response of size " << receivedData.size() <<
+                    ": " << receivedData.toHex();
         return false;
     }
 
@@ -383,4 +383,11 @@ bool TDT4255Board::writeBuffer(quint16 baseAddress, QByteArray buffer)
     }
 
     return true;
+}
+
+void TDT4255Board::clearStaleData()
+{
+    // read the stale data
+    m_serialPort->waitForReadyRead(10);
+    m_serialPort->readAll();
 }
