@@ -265,11 +265,16 @@ void MainWindow::on_btnUpload_clicked()
         return;
     }
 
+    // disable the UI while bitfile upload is in progress
+    ui->tabExSel->setEnabled(false);
+
     if(!m_board->flashBitfile(ui->txtBitfile->text()))
         QMessageBox::critical(this, "Error", "Failed to upload bitfile to FPGA");
     else
         QMessageBox::information(this, "Success", "Bitfile successfully uploaded to FPGA");
 
+    // re-enable UI and check for exercise frameworks
+    ui->tabExSel->setEnabled(true);
     on_btnCheckConnEx0_clicked();
     on_btnCheckConnEx1_clicked();
 }
