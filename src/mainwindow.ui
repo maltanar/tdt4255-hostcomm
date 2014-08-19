@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>788</width>
-    <height>642</height>
+    <width>777</width>
+    <height>667</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -746,6 +746,32 @@
     </property>
     <property name="text">
      <string>&lt;unknown&gt;</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="lblVersionString">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>640</y>
+      <width>161</width>
+      <height>17</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Version: 1.0.0</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="lblURLString">
+    <property name="geometry">
+     <rect>
+      <x>426</x>
+      <y>640</y>
+      <width>341</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>https://github.com/maltanar/tdt4255-hostcomm</string>
     </property>
    </widget>
   </widget>
