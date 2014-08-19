@@ -295,8 +295,6 @@ bool TDT4255Board::readRegister(quint16 address, quint8 &value)
     if(!m_serialPort->isOpen())
         return false;
 
-    clearStaleData();
-
     // example command string for reading register at address 0x0003:
     // r 0003
     QString commandString = QString("r %1\n").arg((ushort) address, 4, 16, QLatin1Char('0'));
@@ -345,6 +343,8 @@ bool TDT4255Board::writeRegister(quint16 address, quint8 value)
 
 bool TDT4255Board::readBuffer(quint16 baseAddress, QByteArray &buffer)
 {
+    clearStaleData();
+
     bool ok = true;
     for(int i = 0; i < buffer.size(); i++)
     {
