@@ -30,7 +30,6 @@ public:
     bool connectToBoard();
     void disconnectFromBoard();
 
-
     bool verifyConnection(quint16 magicRegAddr, QString magicRegExpectedVal);
 
     bool flashBitfile(QString fileName);
@@ -60,6 +59,7 @@ protected:
 signals:
     void bufferOperationProgress(int current, int max);
     void bitfileOperationProgress(int current, int max);
+    void connStatusChange(bool status);
 
 public slots:
     void readPortData();

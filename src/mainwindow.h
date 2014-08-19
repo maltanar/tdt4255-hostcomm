@@ -19,6 +19,7 @@ public:
     bool eventFilter( QObject* o, QEvent* e );
 
 public slots:
+    void connStatusChanged(bool status);
     void updateAllRegisters();
     void bufferOperationProgress(int current, int max);
     void bitfileOperationProgress(int current, int max);

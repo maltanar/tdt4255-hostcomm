@@ -1,4 +1,6 @@
 #include <QDebug>
+#include <QMessageBox>
+#include <QDir>
 #include "tdt4255board.h"
 
 TDT4255Board* TDT4255Board::m_instance = 0;
@@ -7,8 +9,6 @@ TDT4255Board::TDT4255Board() :
     QObject(0)
 {
     m_serialPort = new QSerialPort(this);
-
-    connectToBoard();
 }
 
 bool TDT4255Board::executeProgrammingCommand(QString cmdString, QString expectedReply, bool stripACK)
@@ -135,19 +135,31 @@ void TDT4255Board::destroyInstance()
 bool TDT4255Board::connectToBoard()
 {
     if(m_serialPort->isOpen())
+    {
+        emit connStatusChange(true);
         return true;
+    }
 
     // TODO make the comport configurable
 #ifdef Q_OS_LINUX
-    m_serialPort->setPortName("/dev/ttyACM0");
+    // find the first match for /dev/ttyACM*
+    QDir d("/dev","ttyACM*", QDir::Name, QDir::System);
+    if(d.entryInfoList().size() == 0)
+    {
+        QMessageBox::critical(0, "Error", "/dev/ttyACM* not found, ensure the board is connected and powered on");
+        emit connStatusChange(false);
+        return false;
+    }
+    m_serialPort->setPortName(d.entryInfoList().at(0).absoluteFilePath());
 #else
     m_serialPort->setPortName("COM5");
 #endif
 
     if(!m_serialPort->open(QIODevice::ReadWrite))
     {
-        qDebug() << "Error opening serial port: " << m_serialPort->errorString();
-        qDebug() << "Port: " << m_serialPort->portName();
+        QMessageBox::critical(0, "Error", "Error opening serial port: " + m_serialPort->errorString()
+                                + "\nPort: " + m_serialPort->portName());
+        emit connStatusChange(false);
         return false;
     }
 
@@ -159,6 +171,7 @@ bool TDT4255Board::connectToBoard()
     m_serialPort->setStopBits(QSerialPort::OneStop);
     m_serialPort->setFlowControl(QSerialPort::NoFlowControl);
 
+    emit connStatusChange(true);
     return true;
 }
 
@@ -169,12 +182,21 @@ void TDT4255Board::disconnectFromBoard()
 
 bool TDT4255Board::verifyConnection(quint16 magicRegAddr, QString magicRegExpectedVal)
 {
+    // verify if port is open
     if(!m_serialPort->isOpen())
     {
         qDebug() << "verifyConnection: port not open, attempting to open..";
         if(!connectToBoard())
             return false;
     }
+
+    // verify that we are connected to the correct board type
+    if(!executeProgrammingCommand("get_ver", "3.0.2"))
+    {
+        emit connStatusChange(false);
+        return false;
+    }
+
 
     QByteArray magicBuf(4,0);
     if(!readBuffer(magicRegAddr, magicBuf))

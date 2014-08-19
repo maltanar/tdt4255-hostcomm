@@ -22,6 +22,9 @@ MainWindow::MainWindow(QWidget *parent) :
     m_board = TDT4255Board::getInstance();
     connect(m_board, SIGNAL(bufferOperationProgress(int,int)),this,SLOT(bufferOperationProgress(int,int)));
     connect(m_board, SIGNAL(bitfileOperationProgress(int,int)),this,SLOT(bitfileOperationProgress(int,int)));
+    connect(m_board, SIGNAL(connStatusChange(bool)), this, SLOT(connStatusChanged(bool)));
+
+    m_board->connectToBoard();
 
     // set options for the data memory display
     QHexEdit *hexEdit = ui->dataMemDisplay;
@@ -87,6 +90,14 @@ bool MainWindow::eventFilter(QObject *o, QEvent *e)
     }
 
     return ret;
+}
+
+void MainWindow::connStatusChanged(bool status)
+{
+    if(status)
+        ui->lblBoardConnStatus->setText("Connected");
+    else
+        ui->lblBoardConnStatus->setText("Disconnected");
 }
 
 void MainWindow::updateAllRegisters()
