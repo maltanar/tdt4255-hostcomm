@@ -132,15 +132,25 @@ void MainWindow::on_btnConvertInstrs_clicked()
             ui->lstInstructions->addItem("ADD");
             m_programData.append(0x0100);
         }
-        else if (elem == "~")
+        else if (elem == "-")
         {
             ui->lstInstructions->addItem("SUB");
             m_programData.append(0x0200);
         }
-        else
+        else if(elem.toInt() != 0)
         {
+            if(elem.toInt() < -128 || elem.toInt() > 127)
+            {
+                QMessageBox::critical(this, "Error", "Values must be in range [-128, 127]");
+                return;
+            }
             ui->lstInstructions->addItem("PUSH "+ elem);
             m_programData.append((quint16)(quint8)elem.toInt());
+        }
+        else
+        {
+            QMessageBox::critical(this, "Error", "Unrecognized symbol: " + elem);
+            return;
         }
     }
 

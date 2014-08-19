@@ -105,7 +105,7 @@
      </rect>
     </property>
     <property name="currentIndex">
-     <number>1</number>
+     <number>0</number>
     </property>
     <widget class="QWidget" name="tab">
      <attribute name="title">
@@ -159,7 +159,7 @@
         </rect>
        </property>
        <property name="text">
-        <string>RPN expression (e.g 3 -4 + 1 ~):</string>
+        <string>RPN expression (e.g 3 -4 + 1 -):</string>
        </property>
       </widget>
       <widget class="QLabel" name="lblInstrCount">
